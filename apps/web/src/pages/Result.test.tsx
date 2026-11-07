@@ -68,7 +68,8 @@ describe('result page', () => {
     expect(container.querySelectorAll('.bar-fill.bottleneck')).toHaveLength(1);
     expect(container.querySelector('.loot-card.is-bottleneck')).toHaveTextContent('CPU');
     expect(screen.getByText('Display demand')).toBeInTheDocument();
-    expect(document.title).toBe('CPU bottleneck at 1440p @ 144 — TierBuild');
+    // The title is set in an effect that can run just after the heading appears.
+    await waitFor(() => expect(document.title).toBe('CPU bottleneck at 1440p @ 144 — TierBuild'));
   });
 
   it('shows a balanced build without an upgrade pick', async () => {
@@ -78,7 +79,7 @@ describe('result page', () => {
     expect(await screen.findByRole('heading', { name: '✔ Nicely balanced' })).toBeInTheDocument();
     expect(screen.getByText(/your monitor is now the bottleneck/)).toBeInTheDocument();
     expect(screen.queryByText('Highest-impact upgrade')).not.toBeInTheDocument();
-    expect(document.title).toBe('Balanced at 4K @ 60 — TierBuild');
+    await waitFor(() => expect(document.title).toBe('Balanced at 4K @ 60 — TierBuild'));
   });
 
   it('starts the target caption at the line when the line is left of the middle', async () => {

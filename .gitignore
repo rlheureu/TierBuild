@@ -7,3 +7,8 @@ coverage/
 !.env.example
 .DS_Store
 npm-debug.log*
+
+# Left behind by the original Flask app (see the flask-final tag)
+.venv/
+__pycache__/
+*.pyc

@@ -46,8 +46,8 @@ function param(value: unknown): string | undefined {
   return typeof value === 'string' && value !== '' ? value : undefined;
 }
 
-// Same query string as the Flask /build permalinks:
-// ?cpu=&gpu=&res=&fps=[&ram=&storage=&psu=], or the legacy ?target=1440p144.
+// The /build permalink query: ?cpu=&gpu=&res=&fps=[&ram=&storage=&psu=],
+// or the legacy ?target=1440p144.
 function buildFromQuery(query: Request['query'], affiliateTag?: string): BuildResult | null {
   let resolution = param(query.res);
   let fps = param(query.fps);
