@@ -72,10 +72,18 @@ Working solo, you are the reviewer: read the diff on GitHub's "Files changed" ta
 
 ## Recommended GitHub settings
 
-In **Settings → Branches → Add branch ruleset** (or classic branch protection) for `main`:
+CI must have run at least once (on any PR) before its check can be selected below.
 
-- Require a pull request before merging
-- Require status checks to pass: **CI / check**
-- Block force pushes
+**Protect `main`:** Settings → Rules → Rulesets → New ruleset → New branch ruleset.
 
-In **Settings → General → Pull Requests**: allow only squash merging, and enable "Automatically delete head branches".
+- Ruleset name: `Protect main`; Enforcement status: **Active**
+- Target branches → Add target → **Include default branch**
+- Keep **Restrict deletions** and **Block force pushes** checked
+- **Require a pull request before merging**, with required approvals set to **0** (GitHub won't let you approve your own PR, so 1+ would block a solo owner)
+- **Require status checks to pass** → Add checks → `check` (from GitHub Actions)
+- Leave the bypass list empty, then **Create**
+
+**Merge settings:** Settings → General → Pull Requests.
+
+- Allow only **squash merging** (uncheck merge commits and rebase merging)
+- Check **Automatically delete head branches**
