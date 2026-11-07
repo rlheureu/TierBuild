@@ -1,8 +1,8 @@
 import { Link, Outlet, Route, Routes } from 'react-router';
-import { BuildPending } from './pages/BuildPending';
 import { Home } from './pages/Home';
 import { Methodology } from './pages/Methodology';
 import { NotFound } from './pages/NotFound';
+import { Result } from './pages/Result';
 
 export function App() {
   return (
@@ -10,7 +10,7 @@ export function App() {
       <Route element={<Layout />}>
         <Route index element={<Home />} />
         <Route path="methodology" element={<Methodology />} />
-        <Route path="build" element={<BuildPending />} />
+        <Route path="build" element={<Result />} />
         <Route path="*" element={<NotFound />} />
       </Route>
     </Routes>
