@@ -105,13 +105,13 @@ export function psuWattsRequired(cpu: Cpu, gpu: Gpu): number {
   return Math.ceil(((cpu.tdp + gpu.tdp) * 1.5) / 50) * 50;
 }
 
+// Spaces become '+'; characters that would break the query (&, #, +, %) are percent-encoded.
+function queryValue(text: string): string {
+  return encodeURIComponent(text).replaceAll('%20', '+');
+}
+
 export function affiliateUrl(component: { name: string }, tag?: string | null): string {
-  return (
-    'https://www.amazon.com/s?k=' +
-    component.name.replaceAll(' ', '+') +
-    '&tag=' +
-    (tag || DEFAULT_AFFILIATE_TAG)
-  );
+  return `https://www.amazon.com/s?k=${queryValue(component.name)}&tag=${queryValue(tag || DEFAULT_AFFILIATE_TAG)}`;
 }
 
 function roundTo1(n: number): number {
