@@ -19,6 +19,7 @@ import {
   type HealthResponse,
 } from '@tierbuild/shared';
 import { renderPage, type PageMeta } from './pages.js';
+import { partMeta, partPage } from './parts.js';
 
 export interface AppOptions {
   affiliateTag?: string;
@@ -110,6 +111,15 @@ export function createApp(options: AppOptions = {}) {
     res.json(result);
   });
 
+  app.get('/api/parts/:category/:id', (req, res) => {
+    const page = partPage(req.params.category, req.params.id);
+    if (!page) {
+      res.status(404).json({ error: 'No CPU or GPU with that id.' });
+      return;
+    }
+    res.json(page);
+  });
+
   const indexPath = options.webDist && path.join(options.webDist, 'index.html');
   if (indexPath && existsSync(indexPath)) {
     const template = readFileSync(indexPath, 'utf8');
@@ -130,6 +140,19 @@ export function createApp(options: AppOptions = {}) {
         return;
       }
       res.type('html').send(renderPage(template, resultMeta(result)));
+    });
+
+    app.get('/parts', (_req, res) => {
+      res.type('html').send(renderPage(template, { title: 'Parts — TierBuild' }));
+    });
+
+    app.get('/parts/:category/:id', (req, res, next) => {
+      const page = partPage(req.params.category, req.params.id);
+      if (!page) {
+        next();
+        return;
+      }
+      res.type('html').send(renderPage(template, partMeta(page)));
     });
 
     // Any other page: let the web app show its "Page not found" screen, with a real 404 status.
