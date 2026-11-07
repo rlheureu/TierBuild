@@ -69,7 +69,7 @@ describe('serving the web app', () => {
     expect(legacy.text).toContain('<title>CPU bottleneck at 1440p @ 144 — TierBuild</title>');
   });
 
-  it('redirects bad /build links to the form, like Flask', async () => {
+  it('redirects bad /build links to the form', async () => {
     const res = await request(app).get('/build?cpu=bogus&gpu=rtx4090&res=1440p&fps=144');
     expect(res.status).toBe(302);
     expect(res.headers.location).toBe('/');

@@ -22,7 +22,7 @@ Full-stack TypeScript monorepo (npm workspaces). See README.md for scripts.
 - `apps/server`: Express API.
 - `apps/web`: React + Vite frontend.
 
-The original Flask app lives on the `legacy/Flask` branch as a reference while it is being ported. Its history is unrelated to `main`; never merge it.
+The original Flask app is preserved as the `flask-final` tag (`git switch --detach flask-final` to look at it). Its history is unrelated to `main`; never merge it.
 
 ## Product rules (don't break these)
 

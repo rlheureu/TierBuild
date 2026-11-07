@@ -366,6 +366,11 @@ select:disabled {
   color: rgba(0, 0, 0, 0.75);
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  /* Sits above the target line on a patch of the bar's own color, so the line never crosses the text. */
+  position: relative;
+  z-index: 1;
+  background: inherit;
+  border-radius: 2px;
 }
 .target-line {
   position: absolute;
@@ -379,9 +384,21 @@ select:disabled {
 .target-caption {
   margin-top: -6px;
 }
+.target-lane {
+  position: relative;
+  height: 1.4rem;
+}
 .target-flag {
+  position: absolute;
+  top: 0;
+  white-space: nowrap;
   font-size: 0.78rem;
   color: var(--text-dim);
+  /* Center the ▲ under the 3px line. */
+  transform: translateX(calc(-0.42em + 1.5px));
+}
+.target-flag.flag-end {
+  transform: translateX(calc(-100% + 0.42em + 1.5px));
 }
 
 /* ---- Verdict ---- */
@@ -559,5 +576,9 @@ select:disabled {
   }
   .target-caption {
     padding-left: 110px !important;
+  }
+  /* The res @ fps is already in the heading and sticky summary; the bar track is too narrow for it. */
+  .target-workload {
+    display: none;
   }
 }

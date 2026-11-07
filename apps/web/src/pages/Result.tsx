@@ -42,7 +42,7 @@ export function Result() {
   const state = useBuild(search);
 
   if (state.status === 'invalid') {
-    // Same as the Flask app: a bad or outdated link goes back to the form.
+    // A bad or outdated link goes back to the form.
     return <Navigate to="/" replace />;
   }
   if (state.status === 'loading') {
@@ -118,12 +118,7 @@ function ResultView({ result }: { result: BuildResult }) {
             </div>
           ))}
           <div className="target-caption" style={{ paddingLeft: '180px' }}>
-            <span
-              className="target-flag"
-              style={{ marginLeft: `calc(${result.targetLinePct}% - 40px)` }}
-            >
-              ▲ target: {workload}
-            </span>
+            <TargetFlag pct={result.targetLinePct} workload={workload} />
           </div>
         </div>
       </section>
@@ -211,6 +206,21 @@ function ResultView({ result }: { result: BuildResult }) {
       <ShareCard workload={workload} />
       <BackLink />
     </>
+  );
+}
+
+// Points at the target line: starts at the line on the left half, ends at it on the right
+// half, so the caption never runs past the bar track.
+function TargetFlag({ pct, workload }: { pct: number; workload: string }) {
+  const endAnchored = pct >= 50;
+  return (
+    <div className="target-lane">
+      <span className={`target-flag${endAnchored ? ' flag-end' : ''}`} style={{ left: `${pct}%` }}>
+        {!endAnchored && '▲ '}
+        target<span className="target-workload">: {workload}</span>
+        {endAnchored && ' ▲'}
+      </span>
+    </div>
   );
 }
 
