@@ -1,0 +1,133 @@
+{% extends 'base.html' %}
+{% block title %}{{ page_title }}{% endblock %}
+{% block meta_description %}Build check for {{ result.workload }}: {{ result.verdict }}{% endblock %}
+{% block og %}
+  <meta property="og:title" content="{{ page_title }}">
+  <meta property="og:description" content="{{ result.verdict }}">
+  <meta property="og:type" content="website">
+{% endblock %}
+
+{% block content %}
+<section class="hero small">
+  <h1>Build check:
+    <span class="tier-text-{{ result.target.tier }}">{{ result.workload }}</span>
+  </h1>
+  <p class="sub capacity">{{ result.capacity }}</p>
+</section>
+
+{# Sticky mobile summary #}
+<div class="sticky-summary {% if result.bottleneck %}has-bottleneck{% else %}balanced{% endif %}">
+  <span class="sticky-workload">{{ result.workload }}</span>
+  <span class="sticky-verdict">
+    {% if result.bottleneck %}
+      {{ result.bottleneck.label }} bottleneck
+    {% else %}
+      Balanced
+    {% endif %}
+  </span>
+</div>
+
+<section class="card tier-bar-card">
+  <div class="tier-bars">
+    {% for row in result.rows %}
+    <div class="bar-row">
+      <div class="bar-label">
+        <span class="bar-cat">{{ row.label }}</span>
+        <span class="bar-part">{{ row.name }}</span>
+      </div>
+      <div class="bar-track">
+        <div class="bar-fill {% if result.bottleneck == row %}bottleneck{% endif %}"
+             style="width: {{ row.bar_pct }}%; background: {{ row.tier_info.color }};">
+          <span class="bar-tier-label">{{ row.tier_info.name }}</span>
+        </div>
+        <div class="target-line" style="left: {{ result.target_line_pct }}%;"
+             title="Target: {{ result.workload }}"></div>
+      </div>
+    </div>
+    {% endfor %}
+    <div class="target-caption" style="padding-left: 180px;">
+      <span class="target-flag" style="margin-left: calc({{ result.target_line_pct }}% - 40px);">
+        ▲ target: {{ result.workload }}
+      </span>
+    </div>
+  </div>
+</section>
+
+<section class="verdict card {% if result.bottleneck %}has-bottleneck{% else %}balanced{% endif %}">
+  <h2>{% if result.bottleneck %}⚠ Bottleneck found{% else %}✔ Nicely balanced{% endif %}</h2>
+  <p>{{ result.verdict }}</p>
+  {% if result.psu_status %}
+  <p class="psu-{{ result.psu_status.level }}">{{ result.psu_status.text }}</p>
+  {% endif %}
+  {% if result.storage_note %}
+  <p class="fine">{{ result.storage_note }}</p>
+  {% endif %}
+</section>
+
+{% if result.recommendation %}
+<section class="card reco">
+  <h2>Highest-impact upgrade</h2>
+  <div class="reco-row">
+    <div>
+      <p class="reco-part tier-text-{{ tiers.index(result.recommendation.tier) }}">{{ result.recommendation.part.name }}</p>
+      <p class="reco-why">The cheapest single swap that brings this build to
+         <strong>{{ result.workload }}</strong> — approximately
+         <strong>${{ result.recommendation.part.price }}</strong>.</p>
+    </div>
+    <a class="cta affiliate" href="{{ result.recommendation.url }}" target="_blank" rel="noopener sponsored">
+      See price — ${{ result.recommendation.part.price }}
+    </a>
+  </div>
+  {% if result.stretch %}
+  <p class="stretch">Stretch pick, one tier higher: <strong>{{ result.stretch.part.name }}</strong>
+     (~${{ result.stretch.part.price }}) —
+     <a href="{{ result.stretch.url }}" target="_blank" rel="noopener sponsored">see price</a>.</p>
+  {% endif %}
+</section>
+{% endif %}
+
+<section class="loot-cards">
+  {# Display demand card first — the question the loot table answers #}
+  <div class="loot-card demand-card tier-border-{{ result.target.tier }}">
+    <div class="loot-head">
+      <span class="loot-cat">Display demand</span>
+      <span class="tier-pill" style="background: {{ tiers[result.target.tier].color }};">
+        {{ tiers[result.target.tier].name }}
+      </span>
+    </div>
+    <p class="loot-name">{{ result.workload }}</p>
+    <p class="loot-spec">Resolution + framerate target · {{ result.target.fps }} Hz panel</p>
+    <p class="loot-target">Resolution loads GPU · framerate loads CPU</p>
+  </div>
+
+  {% for row in result.rows %}
+  <div class="loot-card tier-border-{{ row.tier }} {% if result.bottleneck == row %}is-bottleneck{% endif %}">
+    <div class="loot-head">
+      <span class="loot-cat">{{ row.label }}</span>
+      <span class="tier-pill" style="background: {{ row.tier_info.color }};">{{ row.tier_info.name }}</span>
+    </div>
+    <p class="loot-name">{{ row.name }}</p>
+    <p class="loot-spec">{{ row.spec }}</p>
+    <p class="loot-target">Tier target: {{ row.tier_info.target }}</p>
+    {% for note in row.notes %}
+    <p class="loot-note">{{ note }}</p>
+    {% endfor %}
+  </div>
+  {% endfor %}
+</section>
+
+<section class="share card">
+  <h2>Share this result</h2>
+  <div class="share-row">
+    <input id="permalink" type="text" readonly value="{{ request.url }}">
+    <button class="cta secondary" type="button"
+            onclick="navigator.clipboard.writeText(document.getElementById('permalink').value); this.textContent='Copied!'">
+      Copy link
+    </button>
+  </div>
+  <p class="fine">Helping a friend on Reddit or Discord? Send them this link — the tier bar and
+     {{ result.workload }} target explain themselves.</p>
+</section>
+
+<p class="back"><a href="{{ url_for('main.index') }}">← Check another build</a></p>
+{% endblock %}

@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}TierBuild{% endblock %}</title>
+  <meta name="description" content="{% block meta_description %}Build a gaming PC with performance loot tiers. Pick your parts, resolution, and framerate — we'll show the bottleneck.{% endblock %}">
+  {% block og %}{% endblock %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <nav class="nav">
+    <a class="brand" href="{{ url_for('main.index') }}">
+      <span class="brand-tier">Tier</span><span class="brand-build">Build</span>
+    </a>
+    <div class="nav-links">
+      <a href="{{ url_for('main.methodology') }}">Methodology</a>
+    </div>
+  </nav>
+  <main class="container">
+    {% block content %}{% endblock %}
+  </main>
+  <footer class="footer">
+    <p>Tiers calibrated against the median of a rotating basket of demanding AAA titles,
+       high settings, native resolution, no upscaling. Sample data for demo purposes.</p>
+    <p><strong>Resolution loads the GPU; framerate loads the CPU.</strong>
+       Recommendation logic is deterministic from tier math. Affiliate links are illustrative.</p>
+  </footer>
+</body>
+</html>

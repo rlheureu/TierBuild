@@ -1,0 +1,156 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<section class="hero">
+  <h1>What's holding your PC back?</h1>
+  <p class="sub">Every component gets a loot-rarity tier tied to real performance.
+     Pick your parts, then your monitor's <strong>resolution</strong> and <strong>framerate</strong>
+     — we'll show you the bottleneck.</p>
+</section>
+
+<form class="build-form card" action="{{ url_for('main.build') }}" method="get" id="build-form">
+  <div class="form-grid">
+    <label>
+      <span class="field-label">CPU <em>required</em></span>
+      <select name="cpu" required>
+        <option value="" disabled selected>Select your CPU…</option>
+        {% for c in cpus %}
+        <option value="{{ c.id }}">{{ c.name }} — {{ tiers[cpu_tier(c)].name }} (${{ c.price }})</option>
+        {% endfor %}
+      </select>
+    </label>
+    <label>
+      <span class="field-label">GPU <em>required</em></span>
+      <select name="gpu" required>
+        <option value="" disabled selected>Select your GPU…</option>
+        {% for g in gpus %}
+        <option value="{{ g.id }}">{{ g.name }} — {{ tiers[g.tier].name }} (${{ g.price }})</option>
+        {% endfor %}
+      </select>
+    </label>
+  </div>
+
+  <fieldset class="monitor-fields">
+    <legend>Your monitor <em>the performance target</em></legend>
+    <div class="form-grid">
+      <label>
+        <span class="field-label">Resolution <em>required</em></span>
+        <select name="res" id="res-select" required>
+          <option value="" disabled selected>Select resolution…</option>
+          {% for r in resolutions %}
+          <option value="{{ r.id }}">{{ r.label }}</option>
+          {% endfor %}
+        </select>
+      </label>
+      <label>
+        <span class="field-label">Framerate <em>required</em></span>
+        <select name="fps" id="fps-select" required disabled>
+          <option value="" disabled selected>Pick resolution first…</option>
+        </select>
+      </label>
+    </div>
+    <p class="field-hint">Resolution drives GPU demand; framerate drives CPU demand.
+       Only calibrated res × fps pairs are listed.</p>
+  </fieldset>
+
+  <details class="optional">
+    <summary>Full build (optional — RAM, storage, PSU adequacy checks)</summary>
+    <div class="form-grid">
+      <label>
+        <span class="field-label">RAM</span>
+        <select name="ram">
+          <option value="">Skip (assume adequate)</option>
+          {% for r in ram %}
+          <option value="{{ r.id }}">{{ r.name }}</option>
+          {% endfor %}
+        </select>
+      </label>
+      <label>
+        <span class="field-label">Storage</span>
+        <select name="storage">
+          <option value="">Skip (assume adequate)</option>
+          {% for s in storage %}
+          <option value="{{ s.id }}">{{ s.name }}</option>
+          {% endfor %}
+        </select>
+      </label>
+      <label>
+        <span class="field-label">Power supply</span>
+        <select name="psu">
+          <option value="">Skip (assume adequate)</option>
+          {% for p in psus %}
+          <option value="{{ p.id }}">{{ p.name }}</option>
+          {% endfor %}
+        </select>
+      </label>
+    </div>
+  </details>
+
+  <button class="cta" type="submit">Check my build</button>
+</form>
+
+<section class="how-to card">
+  <h2>How to read a result</h2>
+  <ol>
+    <li><strong>Bars</strong> show each part's loot tier. The white line is your
+        <strong>resolution @ framerate</strong> target.</li>
+    <li>The shortest bar below the line is the <strong>bottleneck</strong>.</li>
+    <li><strong>Loot cards</strong> color-code every piece — including display demand.</li>
+    <li>We recommend the <strong>cheapest single swap</strong> that hits your panel.</li>
+  </ol>
+</section>
+
+<section class="tier-legend">
+  <h2>The tier ladder</h2>
+  <div class="legend-grid">
+    {% for t in tiers %}
+    <div class="legend-card tier-border-{{ loop.index0 }}">
+      <span class="tier-name tier-text-{{ loop.index0 }}">{{ t.name }}</span>
+      <span class="tier-target">{{ t.target }}</span>
+    </div>
+    {% endfor %}
+  </div>
+  <p class="fine">High settings, native resolution, median of the current AAA basket.
+     CPUs are tiered on the framerate column only — a Rare CPU next to a Legendary GPU
+     is only a mismatch if <strong>your monitor's framerate</strong> says it is.</p>
+</section>
+
+<script>
+(function () {
+  var fpsByRes = {{ fps_by_resolution_json|safe }};
+  var resSelect = document.getElementById('res-select');
+  var fpsSelect = document.getElementById('fps-select');
+
+  function refillFps() {
+    var res = resSelect.value;
+    var options = fpsByRes[res] || [];
+    fpsSelect.innerHTML = '';
+    if (!options.length) {
+      fpsSelect.disabled = true;
+      var o = document.createElement('option');
+      o.value = '';
+      o.disabled = true;
+      o.selected = true;
+      o.textContent = 'Pick resolution first…';
+      fpsSelect.appendChild(o);
+      return;
+    }
+    fpsSelect.disabled = false;
+    var placeholder = document.createElement('option');
+    placeholder.value = '';
+    placeholder.disabled = true;
+    placeholder.selected = true;
+    placeholder.textContent = 'Select framerate…';
+    fpsSelect.appendChild(placeholder);
+    options.forEach(function (fps) {
+      var o = document.createElement('option');
+      o.value = String(fps);
+      o.textContent = fps + ' Hz / fps';
+      fpsSelect.appendChild(o);
+    });
+  }
+
+  resSelect.addEventListener('change', refillFps);
+})();
+</script>
+{% endblock %}
