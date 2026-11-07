@@ -118,4 +118,22 @@ describe('affiliateUrl', () => {
     );
     expect(affiliateUrl({ name: 'AMD RX 7600' })).toContain('&tag=tierbuild-20');
   });
+
+  it('encodes characters that would break the query string', () => {
+    expect(affiliateUrl({ name: 'Ryzen 9 & Co #1 +plus 100%' }, 'mytag-20')).toBe(
+      'https://www.amazon.com/s?k=Ryzen+9+%26+Co+%231+%2Bplus+100%25&tag=mytag-20',
+    );
+  });
+
+  it('leaves characters that are valid in a URL alone', () => {
+    expect(affiliateUrl({ name: 'AMD Radeon 780M (iGPU)' }, 'mytag-20')).toBe(
+      'https://www.amazon.com/s?k=AMD+Radeon+780M+(iGPU)&tag=mytag-20',
+    );
+  });
+
+  it('keeps a stray & in the tag from adding extra parameters', () => {
+    expect(affiliateUrl({ name: 'AMD RX 7600' }, 'mytag-20&k=other')).toBe(
+      'https://www.amazon.com/s?k=AMD+RX+7600&tag=mytag-20%26k%3Dother',
+    );
+  });
 });
