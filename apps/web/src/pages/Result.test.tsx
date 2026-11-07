@@ -58,7 +58,10 @@ describe('result page', () => {
     expect(await screen.findByRole('heading', { name: '⚠ Bottleneck found' })).toBeInTheDocument();
     expect(screen.getByText(/Your CPU is your bottleneck for 1440p @ 144/)).toBeInTheDocument();
     expect(screen.getByText(/650W 80\+ Bronze is insufficient/)).toHaveClass('psu-danger');
-    expect(screen.getByText('AMD Ryzen 5 9600X')).toHaveClass('reco-part', 'tier-text-3');
+    expect(screen.getByText('AMD Ryzen 5 9600X').closest('p')).toHaveClass(
+      'reco-part',
+      'tier-text-3',
+    );
     expect(screen.getByRole('link', { name: 'See price — $279' })).toHaveAttribute(
       'href',
       expect.stringContaining('AMD+Ryzen+5+9600X'),
@@ -70,6 +73,28 @@ describe('result page', () => {
     expect(screen.getByText('Display demand')).toBeInTheDocument();
     // The title is set in an effect that can run just after the heading appears.
     await waitFor(() => expect(document.title).toBe('CPU bottleneck at 1440p @ 144 — TierBuild'));
+  });
+
+  it('links CPU and GPU names to their part pages, but not RAM', async () => {
+    mockBuildApi();
+    const { container } = renderAt(
+      '/build?cpu=i5-13400f&gpu=rtx4090&res=1440p&fps=144&ram=ddr5-32',
+    );
+    await screen.findByText('Display demand');
+
+    const cardLinks = [...container.querySelectorAll('.loot-name a')].map((a) =>
+      a.getAttribute('href'),
+    );
+    expect(cardLinks).toEqual(['/parts/cpu/i5-13400f', '/parts/gpu/rtx4090']);
+    expect(container.querySelectorAll('.bar-part a')).toHaveLength(2);
+    expect(screen.getByRole('link', { name: 'AMD Ryzen 5 9600X' })).toHaveAttribute(
+      'href',
+      '/parts/cpu/r5-9600x',
+    );
+    expect(screen.getByRole('link', { name: 'AMD Ryzen 7 7800X3D' })).toHaveAttribute(
+      'href',
+      '/parts/cpu/r7-7800x3d',
+    );
   });
 
   it('shows a balanced build without an upgrade pick', async () => {

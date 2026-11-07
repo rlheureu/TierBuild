@@ -2,6 +2,8 @@ import { Link, Outlet, Route, Routes } from 'react-router';
 import { Home } from './pages/Home';
 import { Methodology } from './pages/Methodology';
 import { NotFound } from './pages/NotFound';
+import { PartPage } from './pages/PartPage';
+import { Parts } from './pages/Parts';
 import { Result } from './pages/Result';
 
 export function App() {
@@ -11,6 +13,8 @@ export function App() {
         <Route index element={<Home />} />
         <Route path="methodology" element={<Methodology />} />
         <Route path="build" element={<Result />} />
+        <Route path="parts" element={<Parts />} />
+        <Route path="parts/:category/:id" element={<PartPage />} />
         <Route path="*" element={<NotFound />} />
       </Route>
     </Routes>
@@ -26,6 +30,7 @@ function Layout() {
           <span className="brand-build">Build</span>
         </Link>
         <div className="nav-links">
+          <Link to="/parts">Parts</Link>
           <Link to="/methodology">Methodology</Link>
         </div>
       </nav>

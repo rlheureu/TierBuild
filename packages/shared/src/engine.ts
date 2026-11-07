@@ -36,6 +36,7 @@ const BOTTLENECK_PRIORITY: Record<Category, number> = { gpu: 0, cpu: 1, ram: 2 }
 export interface ComponentRow {
   category: Category;
   label: string;
+  id: string;
   name: string;
   spec: string;
   price: number;
@@ -127,7 +128,7 @@ function bar(target: Target, delta: number): number {
 function componentRow(
   category: Category,
   label: string,
-  part: { name: string; price: number },
+  part: { id: string; name: string; price: number },
   tier: number,
   delta: number,
   target: Target,
@@ -137,6 +138,7 @@ function componentRow(
   return {
     category,
     label,
+    id: part.id,
     name: part.name,
     spec,
     price: part.price,

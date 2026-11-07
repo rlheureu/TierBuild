@@ -556,6 +556,112 @@ select:disabled {
   padding-left: 1.2rem;
 }
 
+/* ---- Part pages ---- */
+.part-link {
+  color: inherit;
+  text-decoration: none;
+}
+.part-link:hover {
+  text-decoration: underline;
+}
+.part-hero-meta {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.part-groups h2 {
+  margin-top: 32px;
+}
+.tier-group h3 {
+  margin: 20px 0 0;
+}
+.tier-group .loot-cards {
+  margin-top: 10px;
+}
+a.part-card {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
+/* An outline, so the tier-colored top border stays visible on hover. */
+a.part-card:hover,
+a.legend-card:hover {
+  box-shadow: 0 0 0 1px var(--accent);
+}
+a.legend-card {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
+.tier-legend .fine a,
+.hero .sub a {
+  color: var(--accent);
+}
+.field-link {
+  display: inline-block;
+  margin-top: 6px;
+  font-size: 0.82rem;
+  color: var(--accent);
+  text-decoration: none;
+}
+.field-link:hover {
+  text-decoration: underline;
+}
+.table-scroll {
+  overflow-x: auto;
+}
+.part-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+.part-table th,
+.part-table td {
+  text-align: left;
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border);
+}
+.part-table th {
+  color: var(--text-dim);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.prose .part-table td.meets {
+  color: var(--tier-1);
+}
+.prose .part-table td.short {
+  color: var(--tier-5);
+}
+.prose .part-table td.warn {
+  color: var(--tier-4);
+}
+.prose a {
+  color: var(--accent);
+}
+.fine.left {
+  text-align: left;
+  margin-left: 0;
+}
+.citation a {
+  color: var(--accent);
+  text-decoration: none;
+  margin-left: 2px;
+}
+.prose .tag {
+  color: var(--text-dim);
+  font-size: 0.85em;
+}
+.sources a {
+  color: var(--accent);
+}
+.sources li {
+  margin-bottom: 6px;
+}
+
 .footer {
   border-top: 1px solid var(--border);
   padding: 20px 32px;
@@ -580,5 +686,39 @@ select:disabled {
   /* The res @ fps is already in the heading and sticky summary; the bar track is too narrow for it. */
   .target-workload {
     display: none;
+  }
+  .part-table {
+    font-size: 0.8rem;
+  }
+  .part-table th,
+  .part-table td {
+    padding: 6px 4px;
+  }
+  .part-table td:first-child,
+  .part-table td:nth-child(2) {
+    white-space: nowrap;
+  }
+  /* Each monitor target becomes a small block: its name, then needs · result · VRAM. */
+  .stack-on-phone thead {
+    display: none;
+  }
+  .stack-on-phone tr {
+    display: block;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .stack-on-phone td {
+    display: inline-block;
+    border-bottom: none;
+    padding: 2px 12px 2px 0;
+  }
+  .stack-on-phone td:first-child {
+    display: block;
+    color: var(--text);
+    font-weight: 700;
+  }
+  .stack-on-phone td[data-label]::before {
+    content: attr(data-label) ' ';
+    color: var(--text-dim);
   }
 }

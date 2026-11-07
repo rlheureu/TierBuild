@@ -81,6 +81,28 @@ describe('serving the web app', () => {
     expect(res.text).toContain('<title>Page not found — TierBuild</title>');
   });
 
+  it('titles the parts index', async () => {
+    const res = await request(app).get('/parts');
+    expect(res.status).toBe(200);
+    expect(res.text).toContain('<title>Parts — TierBuild</title>');
+  });
+
+  it('gives part pages a share preview with the part and its tier', async () => {
+    const res = await request(app).get('/parts/gpu/rtx4090');
+    expect(res.status).toBe(200);
+    expect(res.text).toContain('<title>NVIDIA RTX 4090 — Legendary GPU — TierBuild</title>');
+    expect(res.text).toContain(
+      '<meta property="og:title" content="NVIDIA RTX 4090 — Legendary GPU — TierBuild" />',
+    );
+    expect(res.text).toContain('Legendary-tier GPU');
+  });
+
+  it('returns 404 for unknown part pages', async () => {
+    const res = await request(app).get('/parts/gpu/nope');
+    expect(res.status).toBe(404);
+    expect(res.text).toContain('<title>Page not found — TierBuild</title>');
+  });
+
   it('keeps unknown API routes as plain 404s', async () => {
     const res = await request(app).get('/api/nope');
     expect(res.status).toBe(404);

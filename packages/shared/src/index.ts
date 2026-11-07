@@ -1,7 +1,11 @@
 import type { Cpu, Gpu, Psu, Resolution, Target, TieredPart, TierInfo } from './data.js';
+import type { CpuEvidence, GpuEvidence } from './evidence.js';
+import type { PartContent } from './partContent.js';
 
 export * from './data.js';
 export * from './engine.js';
+export * from './evidence.js';
+export type * from './partContent.js';
 
 export interface HealthResponse {
   status: 'ok';
@@ -19,3 +23,20 @@ export interface CatalogResponse {
   storage: TieredPart[];
   psus: Psu[];
 }
+
+// GET /api/parts/:category/:id: everything a part page needs.
+export type PartPageResponse =
+  | {
+      category: 'cpu';
+      part: Cpu;
+      tierInfo: TierInfo;
+      evidence: CpuEvidence;
+      content: PartContent | null;
+    }
+  | {
+      category: 'gpu';
+      part: Gpu;
+      tierInfo: TierInfo;
+      evidence: GpuEvidence;
+      content: PartContent | null;
+    };

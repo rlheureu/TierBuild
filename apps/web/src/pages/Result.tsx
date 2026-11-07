@@ -1,7 +1,23 @@
 import { useEffect, useState } from 'react';
 import { Link, Navigate, useLocation } from 'react-router';
-import { TIERS, type BuildResult, type ComponentRow, type TierInfo } from '@tierbuild/shared';
-import { usePageTitle } from '../api';
+import {
+  TIERS,
+  type BuildResult,
+  type Category,
+  type ComponentRow,
+  type TierInfo,
+} from '@tierbuild/shared';
+import { partPath, usePageTitle } from '../api';
+
+// CPU and GPU names link to their part pages; RAM has no page.
+function PartName({ category, id, name }: { category: Category; id: string; name: string }) {
+  if (category === 'ram') return <>{name}</>;
+  return (
+    <Link className="part-link" to={partPath(category, id)}>
+      {name}
+    </Link>
+  );
+}
 
 type BuildState =
   | { status: 'loading' }
@@ -100,7 +116,9 @@ function ResultView({ result }: { result: BuildResult }) {
             <div className="bar-row" key={row.category}>
               <div className="bar-label">
                 <span className="bar-cat">{row.label}</span>
-                <span className="bar-part">{row.name}</span>
+                <span className="bar-part">
+                  <PartName category={row.category} id={row.id} name={row.name} />
+                </span>
               </div>
               <div className="bar-track">
                 <div
@@ -138,7 +156,11 @@ function ResultView({ result }: { result: BuildResult }) {
           <div className="reco-row">
             <div>
               <p className={`reco-part tier-text-${tierIndex(recommendation.tier)}`}>
-                {recommendation.part.name}
+                <PartName
+                  category={recommendation.category}
+                  id={recommendation.part.id}
+                  name={recommendation.part.name}
+                />
               </p>
               <p className="reco-why">
                 The cheapest single swap that brings this build to <strong>{workload}</strong> —
@@ -156,7 +178,15 @@ function ResultView({ result }: { result: BuildResult }) {
           </div>
           {stretch && (
             <p className="stretch">
-              Stretch pick, one tier higher: <strong>{stretch.part.name}</strong> (~$
+              Stretch pick, one tier higher:{' '}
+              <strong>
+                <PartName
+                  category={stretch.category}
+                  id={stretch.part.id}
+                  name={stretch.part.name}
+                />
+              </strong>{' '}
+              (~$
               {stretch.part.price}) —{' '}
               <a href={stretch.url} target="_blank" rel="noopener sponsored">
                 see price
@@ -191,7 +221,9 @@ function ResultView({ result }: { result: BuildResult }) {
                 {row.tierInfo.name}
               </span>
             </div>
-            <p className="loot-name">{row.name}</p>
+            <p className="loot-name">
+              <PartName category={row.category} id={row.id} name={row.name} />
+            </p>
             <p className="loot-spec">{row.spec}</p>
             <p className="loot-target">Tier target: {row.tierInfo.target}</p>
             {row.notes.map((note) => (

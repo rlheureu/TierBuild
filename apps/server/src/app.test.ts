@@ -72,4 +72,25 @@ describe('GET /api/build', () => {
     );
     expect(res.body.recommendation.url).toContain('&tag=mytag-20');
   });
+
+  it('includes each row part id so the web app can link to part pages', async () => {
+    const res = await request(app).get('/api/build?cpu=i5-13400f&gpu=rtx4090&res=1440p&fps=144');
+    expect(res.body.rows.map((r: { id: string }) => r.id)).toEqual(['i5-13400f', 'rtx4090']);
+  });
+});
+
+describe('GET /api/parts/:category/:id', () => {
+  it('returns a part page', async () => {
+    const res = await request(app).get('/api/parts/gpu/rtx4090');
+    expect(res.status).toBe(200);
+    expect(res.body.part.name).toBe('NVIDIA RTX 4090');
+    expect(res.body.tierInfo.name).toBe('Legendary');
+    expect(res.body.evidence.targets).toHaveLength(8);
+    expect(res.body.content).toBeNull();
+  });
+
+  it('returns 404 for unknown parts and categories', async () => {
+    expect((await request(app).get('/api/parts/cpu/nope')).status).toBe(404);
+    expect((await request(app).get('/api/parts/ram/ddr4-16')).status).toBe(404);
+  });
 });
