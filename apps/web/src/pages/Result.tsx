@@ -42,7 +42,7 @@ export function Result() {
   const state = useBuild(search);
 
   if (state.status === 'invalid') {
-    // Same as the Flask app: a bad or outdated link goes back to the form.
+    // A bad or outdated link goes back to the form.
     return <Navigate to="/" replace />;
   }
   if (state.status === 'loading') {
