@@ -1,0 +1,86 @@
+import { Link } from 'react-router';
+import { useCatalog, usePageTitle } from '../api';
+
+export function Methodology() {
+  usePageTitle('TierBuild — Methodology');
+  const state = useCatalog();
+
+  return (
+    <>
+      <section className="hero small">
+        <h1>Methodology</h1>
+        <p className="sub">
+          The aesthetic is the hook; the methodology is the moat. No opaque percentages.
+        </p>
+      </section>
+
+      <section className="card prose">
+        <h2>How tiers are earned</h2>
+        <p>
+          Each tier is anchored to a performance target — a <strong>resolution + framerate</strong>{' '}
+          a component can sustain in demanding current AAA titles at{' '}
+          <strong>high settings, native resolution, no upscaling</strong>. A component earns a tier
+          if it meets the target in the <strong>median</strong> title of a rotating basket of ~10
+          demanding games from the last three years, refreshed twice yearly. Not the best case, not
+          the pathological worst case.
+        </p>
+
+        <h2>Resolution loads the GPU; framerate loads the CPU</h2>
+        <p>
+          GPU load scales with resolution (and with the framerate the panel demands). CPU load
+          scales primarily with <strong>framerate</strong>. So a CPU's tier is set by the framerate
+          column of its target only. That's why a Rare CPU with a Legendary GPU is a real bottleneck
+          for a <strong>1440p @ 144</strong> gamer and a perfectly balanced build for a{' '}
+          <strong>4K @ 60</strong> gamer — and why we always ask for both resolution and framerate.
+        </p>
+
+        <h2>Your monitor is the question</h2>
+        <p>
+          Gamers think “I have a 1440p 144Hz monitor,” not “I am Epic tier.” The loot tier is the{' '}
+          <em>answer</em>; resolution and framerate are the <em>question</em>. Every build check
+          shows a concrete <strong>res @ fps</strong> target line so the bottleneck is always
+          relative to the panel you actually use.
+        </p>
+
+        <h2>Modifiers, not fudge factors</h2>
+        <p>
+          Upscaling (DLSS/FSR/XeSS) appears as a separate badge and is never folded into a base
+          tier. Frame generation is excluded from tier math entirely in v1. GPUs with insufficient
+          VRAM for their raster tier carry a visible warning.
+        </p>
+
+        <h2>Tier drift is honest</h2>
+        <p>
+          Tiers are re-benchmarked against the current AAA basket, so hardware can move down a tier
+          as games get heavier. That's not a rug-pull — it's what actually happens to aging
+          hardware. Every recalibration should ship with a changelog explaining every move.
+        </p>
+
+        <h2>About recommendations</h2>
+        <p>
+          Upgrade recommendations are deterministic from the tier math: the cheapest single swap
+          that brings your build to your resolution × framerate target. Affiliate links never change
+          which part gets recommended.
+        </p>
+
+        <h2>Supported workloads (v1)</h2>
+        {state.status === 'loading' && <p>Loading…</p>}
+        {state.status === 'error' && <p>Couldn't load the supported workloads.</p>}
+        {state.status === 'ready' && (
+          <ul>
+            {state.catalog.targets.map((t) => (
+              <li key={t.id}>
+                <strong>{t.shortLabel}</strong> — GPU tier {state.catalog.tiers[t.gpuTier]?.name},
+                overall {state.catalog.tiers[t.tier]?.name}
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+
+      <p className="back">
+        <Link to="/">← Back to the build checker</Link>
+      </p>
+    </>
+  );
+}

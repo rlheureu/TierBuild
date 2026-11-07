@@ -12,6 +12,7 @@ import {
   cpuTier,
   evaluate,
   resolveTarget,
+  type CatalogResponse,
   type HealthResponse,
 } from '@tierbuild/shared';
 
@@ -20,7 +21,7 @@ export interface AppOptions {
 }
 
 // The form's dropdown data. CPUs get their computed tier so the frontend doesn't need the engine.
-const catalog = {
+const catalog: CatalogResponse = {
   tiers: TIERS,
   targets: TARGETS,
   resolutions: RESOLUTIONS,
@@ -33,8 +34,6 @@ const catalog = {
   storage: STORAGE,
   psus: PSUS,
 };
-
-export type CatalogResponse = typeof catalog;
 
 // Query values can arrive as arrays (?cpu=a&cpu=b); only a single string counts.
 function param(value: unknown): string | undefined {
