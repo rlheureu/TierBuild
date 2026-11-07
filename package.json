@@ -12,6 +12,7 @@
   "scripts": {
     "dev": "concurrently -n server,web -c blue,magenta \"npm run dev -w @tierbuild/server\" \"npm run dev -w @tierbuild/web\"",
     "build": "npm run build --workspaces --if-present",
+    "start": "npm run start -w @tierbuild/server",
     "test": "npm run test --workspaces --if-present",
     "typecheck": "npm run typecheck --workspaces --if-present",
     "lint": "eslint .",
