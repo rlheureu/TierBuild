@@ -2,6 +2,6 @@ import { createApp } from './app.js';
 
 const port = Number(process.env.PORT ?? 3001);
 
-createApp().listen(port, () => {
+createApp({ affiliateTag: process.env.AFFILIATE_TAG }).listen(port, () => {
   console.log(`Server listening on http://localhost:${port}`);
 });
