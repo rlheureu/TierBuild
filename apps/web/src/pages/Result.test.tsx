@@ -81,6 +81,26 @@ describe('result page', () => {
     expect(document.title).toBe('Balanced at 4K @ 60 — TierBuild');
   });
 
+  it('starts the target caption at the line when the line is left of the middle', async () => {
+    mockBuildApi();
+    const { container } = renderAt('/build?cpu=i5-13400f&gpu=rtx4090&res=1080p&fps=60');
+    await screen.findByText('Display demand');
+    const flag = container.querySelector('.target-flag')!;
+    expect(flag).toHaveTextContent('▲ target: 1080p @ 60');
+    expect(flag).not.toHaveClass('flag-end');
+    expect(flag).toHaveStyle({ left: '33.3%' });
+  });
+
+  it('ends the target caption at the line when the line is right of the middle', async () => {
+    mockBuildApi();
+    const { container } = renderAt('/build?cpu=i5-13400f&gpu=rtx4090&res=4k&fps=60');
+    await screen.findByText('Display demand');
+    const flag = container.querySelector('.target-flag')!;
+    expect(flag).toHaveTextContent('target: 4K @ 60 ▲');
+    expect(flag).toHaveClass('flag-end');
+    expect(flag).toHaveStyle({ left: '66.7%' });
+  });
+
   it('passes legacy target links through to the API', async () => {
     const fetchMock = mockBuildApi();
     renderAt('/build?cpu=i5-13400f&gpu=rtx4090&target=1440p144');
