@@ -585,8 +585,29 @@ a.part-card {
   color: inherit;
   text-decoration: none;
 }
-a.part-card:hover {
-  border-color: var(--accent);
+/* An outline, so the tier-colored top border stays visible on hover. */
+a.part-card:hover,
+a.legend-card:hover {
+  box-shadow: 0 0 0 1px var(--accent);
+}
+a.legend-card {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
+.tier-legend .fine a,
+.hero .sub a {
+  color: var(--accent);
+}
+.field-link {
+  display: inline-block;
+  margin-top: 6px;
+  font-size: 0.82rem;
+  color: var(--accent);
+  text-decoration: none;
+}
+.field-link:hover {
+  text-decoration: underline;
 }
 .table-scroll {
   overflow-x: auto;

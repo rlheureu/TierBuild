@@ -68,6 +68,42 @@ describe('home page', () => {
     expect(screen.getByText('Mythic')).toBeInTheDocument();
   });
 
+  it('links each tier on the ladder to that tier of the parts list', async () => {
+    mockCatalog();
+    renderAt('/');
+    expect(await screen.findByRole('link', { name: /Rare/ })).toHaveAttribute(
+      'href',
+      '/parts?tier=rare',
+    );
+    expect(screen.getByRole('link', { name: 'Browse all parts →' })).toHaveAttribute(
+      'href',
+      '/parts',
+    );
+  });
+
+  it('offers an about-this-part link once a CPU or GPU is picked', async () => {
+    mockCatalog();
+    const { container } = renderAt('/');
+    await screen.findByRole('button', { name: 'Check my build' });
+    expect(screen.queryByRole('link', { name: /About this CPU/ })).not.toBeInTheDocument();
+
+    fireEvent.change(container.querySelector('select[name="cpu"]')!, {
+      target: { value: 'i5-13400f' },
+    });
+    const cpuLink = screen.getByRole('link', { name: /About this CPU/ });
+    expect(cpuLink).toHaveAttribute('href', '/parts/cpu/i5-13400f');
+    expect(cpuLink).toHaveAttribute('target', '_blank');
+    expect(screen.queryByRole('link', { name: /About this GPU/ })).not.toBeInTheDocument();
+
+    fireEvent.change(container.querySelector('select[name="gpu"]')!, {
+      target: { value: 'rtx4090' },
+    });
+    expect(screen.getByRole('link', { name: /About this GPU/ })).toHaveAttribute(
+      'href',
+      '/parts/gpu/rtx4090',
+    );
+  });
+
   it('only offers calibrated framerates for the chosen resolution', async () => {
     mockCatalog();
     const { container } = renderAt('/');

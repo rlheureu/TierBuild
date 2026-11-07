@@ -1,7 +1,17 @@
 import { useState, type FormEvent } from 'react';
-import { useNavigate } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 import type { CatalogResponse, Resolution } from '@tierbuild/shared';
-import { useCatalog, usePageTitle } from '../api';
+import { partPath, useCatalog, usePageTitle } from '../api';
+
+// Opens in a new tab so a half-filled form isn't lost.
+function AboutPartLink({ category, id }: { category: 'cpu' | 'gpu'; id: string }) {
+  if (!id) return null;
+  return (
+    <a className="field-link" href={partPath(category, id)} target="_blank" rel="noopener">
+      About this {category.toUpperCase()} ↗
+    </a>
+  );
+}
 
 export function Home() {
   usePageTitle('TierBuild');
@@ -72,36 +82,42 @@ function BuildForm({ catalog }: { catalog: CatalogResponse }) {
   return (
     <form className="build-form card" onSubmit={onSubmit}>
       <div className="form-grid">
-        <label>
-          <span className="field-label">
-            CPU <em>required</em>
-          </span>
-          <select name="cpu" required value={cpu} onChange={(e) => setCpu(e.target.value)}>
-            <option value="" disabled>
-              Select your CPU…
-            </option>
-            {catalog.cpus.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.name} — {catalog.tiers[c.tier]?.name} (${c.price})
+        <div>
+          <label>
+            <span className="field-label">
+              CPU <em>required</em>
+            </span>
+            <select name="cpu" required value={cpu} onChange={(e) => setCpu(e.target.value)}>
+              <option value="" disabled>
+                Select your CPU…
               </option>
-            ))}
-          </select>
-        </label>
-        <label>
-          <span className="field-label">
-            GPU <em>required</em>
-          </span>
-          <select name="gpu" required value={gpu} onChange={(e) => setGpu(e.target.value)}>
-            <option value="" disabled>
-              Select your GPU…
-            </option>
-            {catalog.gpus.map((g) => (
-              <option key={g.id} value={g.id}>
-                {g.name} — {catalog.tiers[g.tier]?.name} (${g.price})
+              {catalog.cpus.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.name} — {catalog.tiers[c.tier]?.name} (${c.price})
+                </option>
+              ))}
+            </select>
+          </label>
+          <AboutPartLink category="cpu" id={cpu} />
+        </div>
+        <div>
+          <label>
+            <span className="field-label">
+              GPU <em>required</em>
+            </span>
+            <select name="gpu" required value={gpu} onChange={(e) => setGpu(e.target.value)}>
+              <option value="" disabled>
+                Select your GPU…
               </option>
-            ))}
-          </select>
-        </label>
+              {catalog.gpus.map((g) => (
+                <option key={g.id} value={g.id}>
+                  {g.name} — {catalog.tiers[g.tier]?.name} (${g.price})
+                </option>
+              ))}
+            </select>
+          </label>
+          <AboutPartLink category="gpu" id={gpu} />
+        </div>
       </div>
 
       <fieldset className="monitor-fields">
@@ -226,16 +242,23 @@ function TierLegend({ tiers }: { tiers: CatalogResponse['tiers'] }) {
       <h2>The tier ladder</h2>
       <div className="legend-grid">
         {tiers.map((t, i) => (
-          <div key={t.name} className={`legend-card tier-border-${i}`}>
+          <Link
+            key={t.name}
+            to={`/parts?tier=${t.name.toLowerCase()}`}
+            className={`legend-card tier-border-${i}`}
+          >
             <span className={`tier-name tier-text-${i}`}>{t.name}</span>
             <span className="tier-target">{t.target}</span>
-          </div>
+          </Link>
         ))}
       </div>
       <p className="fine">
         High settings, native resolution, median of the current AAA basket. CPUs are tiered on the
         framerate column only — a Rare CPU next to a Legendary GPU is only a mismatch if{' '}
         <strong>your monitor's framerate</strong> says it is.
+      </p>
+      <p className="fine">
+        <Link to="/parts">Browse all parts →</Link>
       </p>
     </section>
   );

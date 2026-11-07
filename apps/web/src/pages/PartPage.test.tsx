@@ -206,4 +206,26 @@ describe('parts index', () => {
     renderAt('/');
     expect(screen.getByRole('link', { name: 'Parts' })).toHaveAttribute('href', '/parts');
   });
+
+  it('shows only one tier when filtered by ?tier=', async () => {
+    mockApi();
+    renderAt('/parts?tier=rare');
+
+    expect(await screen.findByRole('heading', { name: 'Rare parts' })).toBeInTheDocument();
+    const groupHeadings = (await screen.findAllByRole('heading', { level: 3 })).map(
+      (h) => h.textContent,
+    );
+    expect(groupHeadings).toEqual(['Rare', 'Rare']);
+    expect(screen.getByRole('link', { name: /NVIDIA RTX 4060 Ti/ })).toBeInTheDocument();
+    expect(screen.queryByRole('link', { name: /NVIDIA RTX 4090/ })).not.toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Show all tiers' })).toHaveAttribute('href', '/parts');
+  });
+
+  it('shows every tier for an unknown ?tier= value', async () => {
+    mockApi();
+    renderAt('/parts?tier=bogus');
+
+    expect(await screen.findByRole('heading', { name: 'Parts' })).toBeInTheDocument();
+    expect((await screen.findAllByRole('heading', { level: 3 })).length).toBe(12);
+  });
 });
